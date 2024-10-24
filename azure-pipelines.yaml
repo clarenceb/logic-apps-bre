@@ -26,10 +26,10 @@ stages:
             # csmParametersFile: '$(Pipeline.Workspace)/infra/bicep/deploy.bicepparam'
             deploymentMode: 'Incremental'
             deploymentName: 'DeployPipelineTemplate'
-- stage: Deploy_LogicApp
+- stage: BuildPackage_LogicApp
   jobs:
-    - job: Deploy_Logic_App
-      displayName: 'Deploy Logic App'
+    - job: BuildPackage_LogicApp
+      displayName: 'Build and Package Logic App'
       pool:
         vmImage: 'windows-latest'
       steps:
@@ -46,11 +46,28 @@ stages:
             rootFolderOrFile: 'MyLogicAppRulesWorkspace\LogicApp'
             includeRootFolder: false
             archiveType: 'zip'
-            archiveFile: '$(Build.ArtifactStagingDirectory)/logicapps.zip'
+            archiveFile: '$(Build.ArtifactStagingDirectory)/mylogicapp/mylogicapp-$(Build.BuildNumber).zip'
             replaceExistingArchive: true
+        - task: PublishPipelineArtifact@1
+          displayName: 'Publish Artifact'
+          inputs:
+            targetPath: $(System.DefaultWorkingDirectory)/mylogicapp
+            artifactName: LogicAppBRE
+- stage: Deploy_LogicApp
+  jobs:
+    - job: Deploy_LogicApp
+      displayName: 'Deploy Logic App'
+      pool:
+        vmImage: 'windows-latest'
+      steps:
+        - task: DownloadPipelineArtifact@2
+          displayName: 'Download Artifact'
+          inputs:
+            artifact: LogicAppBRE
+            path: $(Build.StagingDirectory)
         - task: CmdLine@2
-          displayName: 'Deploy Logic App'
+          displayName: 'Deploy Logic App from Zip'
           inputs:
             script: |
               cd MyLogicAppRulesWorkspace\LogicApp
-              az functionapp deploy --resource-group $(resourceGroupName) --name $(logicAppName) --src-path '$(Build.ArtifactStagingDirectory)/logicapps.zip' --type zip
+              az functionapp deploy --resource-group $(resourceGroupName) --name $(logicAppName) --src-path '$(Build.StagingDirectory)/logicapps.zip' --type zip
