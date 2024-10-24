@@ -1,5 +1,5 @@
 stages:
-- stage: Deploy Infra
+- stage: Deploy_Infra
   jobs:
     - job:
       displayName: 'Deploy Infra'
