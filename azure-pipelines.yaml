@@ -51,7 +51,7 @@ stages:
         - task: PublishPipelineArtifact@1
           displayName: 'Publish Artifact'
           inputs:
-            targetPath: $(System.DefaultWorkingDirectory)/mylogicapp
+            targetPath: '$(Build.ArtifactStagingDirectory)/mylogicapp'
             artifactName: LogicAppBRE
 - stage: Deploy_LogicApp
   jobs:
@@ -64,10 +64,10 @@ stages:
           displayName: 'Download Artifact'
           inputs:
             artifact: LogicAppBRE
-            path: $(Build.StagingDirectory)
+            path: '$(Build.ArtifactStagingDirectory)/mylogicapp'
         - task: CmdLine@2
           displayName: 'Deploy Logic App from Zip'
           inputs:
             script: |
               cd MyLogicAppRulesWorkspace\LogicApp
-              az functionapp deploy --resource-group $(resourceGroupName) --name $(logicAppName) --src-path '$(Build.StagingDirectory)/logicapps.zip' --type zip
+              az functionapp deploy --resource-group $(resourceGroupName) --name $(logicAppName) --src-path '$(Build.ArtifactStagingDirectory)/mylogicapp/logicapps.zip' --type zip
