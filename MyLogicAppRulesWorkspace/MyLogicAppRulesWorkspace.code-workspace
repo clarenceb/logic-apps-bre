@@ -8,5 +8,14 @@
       "name": "LogicApp",
       "path": "./LogicApp"
     }
-  ]
+  ],
+  "settings": {
+    "azurite.location": "${env:USERPROFILE}\\.azurelogicapps\\.azurite",
+    "terminal.integrated.env.windows": {
+      "PATH": "${env:USERPROFILE}\\.azurelogicapps\\dependencies\\DotNetSDK;${env:PATH}"
+    },
+    "omnisharp.dotNetCliPaths": [
+      "${env:USERPROFILE}\\.azurelogicapps\\dependencies\\DotNetSDK"
+    ]
+  }
 }

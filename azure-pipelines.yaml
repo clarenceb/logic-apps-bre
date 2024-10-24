@@ -1,0 +1,6 @@
+jobs:
+- job: Build_Logic_App
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+  - bash: echo "Hello world"

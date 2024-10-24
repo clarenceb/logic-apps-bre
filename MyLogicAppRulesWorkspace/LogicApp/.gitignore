@@ -15,3 +15,5 @@ workflow-designtime/
 *.code-workspace
 
 lib
+*.zip
+
