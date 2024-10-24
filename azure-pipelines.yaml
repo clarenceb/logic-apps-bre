@@ -1,3 +1,9 @@
+variables:
+- name: resourceGroupName
+  value: la-bre-cicd
+- name: logicAppName
+  value: bre-logicappstd
+
 stages:
 - stage: Deploy_Infra
   jobs:
@@ -13,7 +19,7 @@ stages:
             azureResourceManagerConnection: 'lab-bre-demo-rg-sc'
             subscriptionId: '$(subscriptionId)'
             action: 'Create Or Update Resource Group'
-            resourceGroupName: 'la-bre-cicd'
+            resourceGroupName: $(resourceGroupName)
             location: 'Australia East'
             templateLocation: 'Linked artifact'
             csmFile: './infra/bicep/deploy.bicep'
@@ -22,8 +28,8 @@ stages:
             deploymentName: 'DeployPipelineTemplate'
 - stage: Deploy_LogicApp
   jobs:
-    - job: Build_Logic_App
-      displayName: 'Build Logic App'
+    - job: Deploy_Logic_App
+      displayName: 'Deploy Logic App'
       pool:
         vmImage: 'windows-latest'
       steps:
@@ -34,3 +40,11 @@ stages:
               cd MyLogicAppRulesWorkspace\Function
               dotnet restore ./RulesFunction.csproj
               dotnet build ./RulesFunction.csproj
+        - task: CmdLine@2
+          displayName: 'Deploy Logic App'
+          inputs:
+            script: |
+              cd MyLogicAppRulesWorkspace\LogicApp
+              zip -r logicapps.zip . -x *local.settings.json -x *appsettings.json
+              az functionapp deploy --resource-group $(resourceGroupName) --name $(logicAppName) --src-path logicapps.zip --type zip
+
