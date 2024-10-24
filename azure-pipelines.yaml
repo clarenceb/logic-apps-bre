@@ -1,7 +1,7 @@
 stages:
 - stage: Deploy_Infra
   jobs:
-    - job:
+    - job: Bicep
       displayName: 'Deploy Infra'
       pool:
         vmImage: 'ubuntu-latest'
@@ -20,3 +20,17 @@ stages:
             # csmParametersFile: '$(Pipeline.Workspace)/infra/bicep/deploy.bicepparam'
             deploymentMode: 'Incremental'
             deploymentName: 'DeployPipelineTemplate'
+- stage: Deploy_LogicApp
+  jobs:
+    - job: Build_Logic_App
+      displayName: 'Build Logic App'
+      pool:
+        vmImage: 'windows-latest'
+      steps:
+        - task: CmdLine@2
+          displayName: 'Build Logic App'
+          inputs:
+            script: |
+              cd MyLogicAppRulesWorkspace\Function
+              dotnet restore ./RulesFunction.csproj
+              dotnet build ./RulesFunction.csproj
