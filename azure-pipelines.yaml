@@ -16,7 +16,7 @@ stages:
             resourceGroupName: 'la-bre-cicd'
             location: 'Australia East'
             templateLocation: 'Linked artifact'
-            csmFile: '$(Pipeline.Workspace)/infra/bicep/deploy.bicep'
+            csmFile: './infra/bicep/deploy.bicep'
             # csmParametersFile: '$(Pipeline.Workspace)/infra/bicep/deploy.bicepparam'
             deploymentMode: 'Incremental'
             deploymentName: 'DeployPipelineTemplate'
