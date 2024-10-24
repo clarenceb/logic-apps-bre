@@ -40,11 +40,17 @@ stages:
               cd MyLogicAppRulesWorkspace\Function
               dotnet restore ./RulesFunction.csproj
               dotnet build ./RulesFunction.csproj
+        - task: ArchiveFiles@2
+          displayName: 'Create LogicApp zip package'
+          inputs:
+            rootFolderOrFile: 'MyLogicAppRulesWorkspace\LogicApp'
+            includeRootFolder: false
+            archiveType: 'zip'
+            archiveFile: '$(Build.ArtifactStagingDirectory)/logicapps.zip'
+            replaceExistingArchive: true
         - task: CmdLine@2
           displayName: 'Deploy Logic App'
           inputs:
             script: |
               cd MyLogicAppRulesWorkspace\LogicApp
-              zip -r logicapps.zip . -x *local.settings.json -x *appsettings.json
-              az functionapp deploy --resource-group $(resourceGroupName) --name $(logicAppName) --src-path logicapps.zip --type zip
-
+              az functionapp deploy --resource-group $(resourceGroupName) --name $(logicAppName) --src-path '$(Build.ArtifactStagingDirectory)/logicapps.zip' --type zip
