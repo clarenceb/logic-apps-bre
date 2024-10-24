@@ -4,15 +4,19 @@ stages:
     - job:
       displayName: 'Deploy Infra'
       pool:
-        vmImage: 'windows-latest'
+        vmImage: 'ubuntu-latest'
       steps:
-        - task: AzureResourceGroupDeployment@2
+        - task: AzureResourceManagerTemplateDeployment@3
+          displayName: 'Bicep Deployment'
           inputs:
-            azureSubscription: 'lab-bre-demo-rg-sc'
+            deploymentScope: 'Resource Group'
+            azureResourceManagerConnection: 'lab-bre-demo-rg-sc'
+            subscriptionId: '$(subscriptionId)'
             action: 'Create Or Update Resource Group'
             resourceGroupName: 'la-bre-cicd'
             location: 'Australia East'
             templateLocation: 'Linked artifact'
             csmFile: '$(Pipeline.Workspace)/infra/bicep/deploy.bicep'
-            # csmParametersFile: '$(Pipeline.Workspace)/infra/bicep/deploy.parameters.json'
+            # csmParametersFile: '$(Pipeline.Workspace)/infra/bicep/deploy.bicepparam'
             deploymentMode: 'Incremental'
+            deploymentName: 'DeployPipelineTemplate'
