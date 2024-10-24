@@ -1,6 +1,18 @@
-jobs:
-- job: Build_Logic_App
-  pool:
-    vmImage: 'ubuntu-latest'
-  steps:
-  - bash: echo "Hello world"
+stages:
+- stage: Deploy Infra
+  jobs:
+    - job:
+      displayName: 'Deploy Infra'
+      pool:
+        vmImage: 'windows-latest'
+      steps:
+        - task: AzureResourceGroupDeployment@2
+          inputs:
+            azureSubscription: 'lab-bre-demo-rg-sc'
+            action: 'Create Or Update Resource Group'
+            resourceGroupName: 'la-bre-cicd'
+            location: 'Australia East'
+            templateLocation: 'Linked artifact'
+            csmFile: '$(Pipeline.Workspace)/infra/bicep/deploy.bicep'
+            # csmParametersFile: '$(Pipeline.Workspace)/infra/bicep/deploy.parameters.json'
+            deploymentMode: 'Incremental'
