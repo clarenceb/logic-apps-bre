@@ -70,4 +70,4 @@ stages:
           inputs:
             script: |
               cd MyLogicAppRulesWorkspace\LogicApp
-              az functionapp deploy --resource-group $(resourceGroupName) --name $(logicAppName) --src-path '$(Build.ArtifactStagingDirectory)/mylogicapp/logicapps.zip' --type zip
+              az functionapp deploy --resource-group $(resourceGroupName) --name $(logicAppName) --src-path '$(Build.ArtifactStagingDirectory)/mylogicapp/mylogicapp-$(Build.BuildNumber).zip' --type zip
