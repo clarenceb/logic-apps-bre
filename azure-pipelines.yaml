@@ -69,6 +69,5 @@ stages:
           displayName: 'Deploy Logic App from Zip'
           inputs:
             script: |
-              dir $(Build.ArtifactStagingDirectory)
-              dir $(Build.ArtifactStagingDirectory)\mylogicapp
-              az functionapp deploy --resource-group $(resourceGroupName) --name $(logicAppName) --src-path '$(Build.ArtifactStagingDirectory)\mylogicapp\mylogicapp-$(Build.BuildNumber).zip' --type zip
+              cd $(Build.ArtifactStagingDirectory)\mylogicapp
+              az functionapp deploy --resource-group $(resourceGroupName) --name $(logicAppName) --src-path .\mylogicapp-$(Build.BuildNumber).zip --type zip
