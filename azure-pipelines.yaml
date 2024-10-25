@@ -3,6 +3,8 @@ variables:
   value: la-bre-cicd
 - name: logicAppName
   value: bre-logicappstd
+- name: azureConnectionName
+  value: lab-bre-demo-rg-sc
 
 stages:
 - stage: Deploy_Infra
@@ -16,7 +18,7 @@ stages:
           displayName: 'Bicep Deployment'
           inputs:
             deploymentScope: 'Resource Group'
-            azureResourceManagerConnection: 'lab-bre-demo-rg-sc'
+            azureResourceManagerConnection: '$(azureConnectionName)'
             subscriptionId: '$(subscriptionId)'
             action: 'Create Or Update Resource Group'
             resourceGroupName: $(resourceGroupName)
@@ -65,9 +67,12 @@ stages:
           inputs:
             artifact: LogicAppBRE
             path: '$(Build.ArtifactStagingDirectory)/mylogicapp'
-        - task: CmdLine@2
+        - task: AzureCLI@2
           displayName: 'Deploy Logic App from Zip'
           inputs:
-            script: |
-              cd $(Build.ArtifactStagingDirectory)\mylogicapp
-              az functionapp deploy --resource-group $(resourceGroupName) --name $(logicAppName) --src-path .\mylogicapp-$(Build.BuildNumber).zip --type zip
+            azureSubscription: '$(azureConnectionName)'
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: |
+              cd $(Build.ArtifactStagingDirectory)/mylogicapp
+              az functionapp deploy --resource-group $(resourceGroupName) --name $(logicAppName) --src-path ./mylogicapp-$(Build.BuildNumber).zip --type zip
