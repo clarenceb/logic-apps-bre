@@ -57,7 +57,7 @@ az functionapp deploy --resource-group $RESOURCE_GROUP_NAME --name $LOGIC_APP_NA
 az functionapp config appsettings set -g $RESOURCE_GROUP_NAME -n $LOGIC_APP_NAME --settings @appsettings.json
 ```
 
-# Azure Pipleines automation
+# Azure Pipelines automation
 
 Create a new Azure DevOps project and import the `azure-pipelines.yml` file to automate the build and deployment of the Logic App with BRE.
 
