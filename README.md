@@ -66,3 +66,5 @@ This pipeline is using the new YAML-based multi-stage pipelines feature in Azure
 It deploys infrastructure, builds the Logic App with BRE, and deploys the Logic App to a Logic Apps Standard plan.
 
 You can change this to segregate the infrastructure deployment and Logic App deployment into separate pipelines.
+
+![azdo-pipelines](img/azdo-pipelines.png)
