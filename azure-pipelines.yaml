@@ -71,8 +71,8 @@ stages:
           displayName: 'Deploy Logic App from Zip'
           inputs:
             azureSubscription: '$(azureConnectionName)'
-            scriptType: 'bash'
+            scriptType: 'batch'
             scriptLocation: 'inlineScript'
             inlineScript: |
-              cd $(Build.ArtifactStagingDirectory)/mylogicapp
-              az functionapp deploy --resource-group $(resourceGroupName) --name $(logicAppName) --src-path ./mylogicapp-$(Build.BuildNumber).zip --type zip
+              cd $(Build.ArtifactStagingDirectory)\mylogicapp
+              az functionapp deploy --resource-group $(resourceGroupName) --name $(logicAppName) --src-path .\mylogicapp-$(Build.BuildNumber).zip --type zip
