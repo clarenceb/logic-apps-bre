@@ -12,8 +12,6 @@ __azurite_db*__.json
 # Added folders and file patterns
 workflow-designtime/
 
-*.code-workspace
-
+# Build outputs
 lib
 *.zip
-

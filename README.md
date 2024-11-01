@@ -70,6 +70,39 @@ You can change this to segregate the infrastructure deployment and Logic App dep
 
 ![azdo-pipelines](img/azdo-pipelines.png)
 
+## Editing, testing, and debugging locally
+
+Assumes a Windows OS and Visual Studio Code (VSCode) with Azure Functions and Azure Logic Apps (Standard) extensions installed.  You'll also need the Azurite extension for Functions local storage.  If you received storage errors, you may need to start Azurite manually (CTRL+SHIFT+P, `Azurite: Start Blob Service`, repeat for `Azurite: Start Table Service`, etc.)
+
+Start VSCode and then open the Workspace file:
+
+* Navigate to the menu option **File** / **Open Workspace from File**
+* Select the file `MyLogicAppRulesWorkspace.code-workspace`
+* **or** start VSCode with `code MyLogicAppRulesWorkspace.code-workspace` from the terminal
+* Open a Terminal window in VSCode:
+
+```powershell
+# Build the Function App as a custom code library for Logic Apps
+cd MyLogicAppRulesWorkspace\Function
+dotnet restore .\RulesFunction.csproj
+dotnet build .\RulesFunction.csproj
+```
+
+* Select the **Run and Debug** icon on the left-hand side of the VSCode window (or `CTRL+SHIFT+D`)
+* From the **Run and Debug** menu, select **Attach to Logic App (Logic App)**
+* Click the **Start Debugging** button (or `F5`)
+* From the **Run and Debug** menu, select **Attach to .NET Functions (Functions)**
+* Click the **Start Debugging** button (or `F5`)
+* Validate that both Logic App and Function App are running locally
+* In the Workspace Explorer, navigate to the Logic App file `MyRulesWorkflow\workflow.json`
+* Right-click on the file and select **Open Designer** -- it should render with no errors
+* Right-click on the file and select **Overview** -- it should render with no errors
+* Click the **Run trigger** button to test the Logic App -- it should execute and succeed
+* Click the latest run to view the run details
+* Click the action **Call a local rules function in this logic app** to view the action inputs and outputs
+* Stop the Function and Logic App debugging sessions (`SHIFT+F5`)
+
+
 ## Resources
 
 * [Logic Apps (Standard) – Azure DevOps sample](https://github.com/Azure/logicapps/tree/master/azure-devops-sample)
