@@ -57,28 +57,6 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02-preview' = {
   }
 }
 
-resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
-  name: 'logs${uniqueString(resourceGroup().id, prefix)}'
-  location: location
-  tags: tags
-  properties: {
-    retentionInDays: 30
-    sku: {
-      name: 'PerGB2018'
-    }
-  }
-}
-
-resource appInsights 'Microsoft.Insights/components@2020-02-02-preview' = {
-  name: 'appins${uniqueString(resourceGroup().id, prefix)}'
-  location: location
-  kind: 'web'
-  properties: {
-    Application_Type: 'web'
-    WorkspaceResourceId: logAnalytics.id
-  }
-}
-
 resource appServicePlan 'Microsoft.Web/serverfarms@2018-02-01' = {
   name: appServicePlanName
   location: location
