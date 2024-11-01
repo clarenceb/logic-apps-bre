@@ -108,10 +108,6 @@ resource logicAppStd 'Microsoft.Web/sites@2022-03-01' = {
           value: '~18'
         }
         {
-          name: 'WEBSITE_NODE_DEFAULT_VERSION'
-          value: '~18'
-        }
-        {
           name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
           value: 'DefaultEndpointsProtocol=https;AccountName=${storage.name};AccountKey=${storage.listKeys().keys[0].value};EndpointSuffix=core.windows.net'
         }
