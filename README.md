@@ -10,7 +10,6 @@ Creates the Logic Apps Standard Single Tenant plan.
 RESOURCE_GROUP_NAME=la-bre-cicd
 LOCATION=australiaeast
 SUBSCRIPTION_ID=xxxx-xxxx-xxxx-xxxx
-LOGIC_APP_NAME=bre-logicappstd
 
 az login
 az account set --subscription $SUBSCRIPTION_ID
@@ -21,7 +20,7 @@ az bicep upgrade
 az deployment group create --resource-group $RESOURCE_GROUP_NAME --template-file infra/bicep/deploy.bicep [--parameters @deploy.parameters.json]
 ```
 
-# Build Logic App with BRE
+## Build Logic App with BRE
 
 Builds the Logic App with Business Rules Engine (BRE) assemblies bundled into a ZIP file.
 
@@ -37,11 +36,13 @@ cd ../MyLogicAppRulesWorkspace/LogicApp
 zip -r logicapps.zip . -x *local.settings.json -x *appsettings.json -x *__azurite_db_*.json -x *storage__ -x *.zip
 ```
 
-# Deploy Logic App with BRE
+## Deploy Logic App with BRE
 
 Deploys the Logic App with Business Rules Engine (BRE) assemblies bundled into a ZIP file to a Logic Apps Standard plan.
 
 ```bash
+LOGIC_APP_NAME="$(az deployment group show --resource-group $RESOURCE_GROUP_NAME --name deploy --query properties.outputs.logicAppName.value -o tsv)"
+
 az functionapp deploy --resource-group $RESOURCE_GROUP_NAME --name $LOGIC_APP_NAME --src-path logicapps.zip --type zip
 
 # If your Logic App using Connections (connections.json) or Parameters (parameters.json) files, you should include them in the ZIP file.
@@ -57,7 +58,7 @@ az functionapp deploy --resource-group $RESOURCE_GROUP_NAME --name $LOGIC_APP_NA
 az functionapp config appsettings set -g $RESOURCE_GROUP_NAME -n $LOGIC_APP_NAME --settings @appsettings.json
 ```
 
-# Azure Pipelines automation
+## Azure Pipelines automation
 
 Create a new Azure DevOps project and import the `azure-pipelines.yml` file to automate the build and deployment of the Logic App with BRE.
 
@@ -68,3 +69,7 @@ It deploys infrastructure, builds the Logic App with BRE, and deploys the Logic 
 You can change this to segregate the infrastructure deployment and Logic App deployment into separate pipelines.
 
 ![azdo-pipelines](img/azdo-pipelines.png)
+
+## Resources
+
+* [Logic Apps (Standard) – Azure DevOps sample](https://github.com/Azure/logicapps/tree/master/azure-devops-sample)
