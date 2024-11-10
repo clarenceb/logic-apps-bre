@@ -10,7 +10,7 @@
     }
   ],
   "settings": {
-    "azurite.location": "${env:USERPROFILE}\\.azurelogicapps\\.azurite",
+    "azurite.location": ".azurite",
     "terminal.integrated.env.windows": {
       "PATH": "${env:USERPROFILE}\\.azurelogicapps\\dependencies\\DotNetSDK;${env:PATH}"
     },
