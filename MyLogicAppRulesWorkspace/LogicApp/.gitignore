@@ -21,4 +21,4 @@ lib
 
 # Debugging
 TrackingOutput.txt
-
+.env

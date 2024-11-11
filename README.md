@@ -97,7 +97,8 @@ dotnet build .\RulesFunction.csproj
 * In the Workspace Explorer, navigate to the Logic App file `MyRulesWorkflow\workflow.json`
 * Right-click on the file and select **Open Designer** -- it should render with no errors
 * Right-click on the file and select **Overview** -- it should render with no errors
-* Click the **Run trigger** button to test the Logic App -- it should execute and succeed
+* Copy the Logic App URL and paste it into a `.env` file (see `.env-template` as an example)
+* Open the [Rest Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) file `TestBRE.http` and run the request to test the Logic App
 * Click the latest run to view the run details
 * Click the action **Call a local rules function in this logic app** to view the action inputs and outputs
 * Stop the Function and Logic App debugging sessions (`SHIFT+F5`)

@@ -1,0 +1,13 @@
+# Copy file `.env-template` to `.env` and update the values
+# Set `MY_RULES_WORKFLOW_URL` to the URL of the locally running `MyRulesWorkflow` workflow via the "Overview" pane
+
+@myRulesWorkflowUrl = {{ $dotenv MY_RULES_WORKFLOW_URL }}
+
+POST {{ myRulesWorkflowUrl }}
+Content-Type: application/json
+
+{
+    "inputXml": "<ns0:Root xmlns:ns0=\"http://BizTalk_Server_Project1.SchemaUser\"><UserDetails><Age>70</Age><Name>UserName</Name><zipCode>98053</zipCode></UserDetails><Status><Gold>false</Gold><Discount>0</Discount></Status></ns0:Root>",
+    "purchaseAmount": 1100,
+    "zipCode": "98052"
+}
