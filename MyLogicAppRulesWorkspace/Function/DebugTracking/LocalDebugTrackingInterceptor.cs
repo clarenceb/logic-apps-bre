@@ -452,7 +452,7 @@ namespace ContosoNamespace
                 }
 
                 PrintHeader("------------- DEBUG MESSAGE");
-                m_traceStream.WriteLine($"Title: {title}: {title}");
+                m_traceStream.WriteLine($"Title: {title}");
                 m_traceStream.WriteLine($"Message: {message}");
                 m_traceStream.WriteLine($"Value: {value.ToString()}");
                 m_traceStream.Flush();

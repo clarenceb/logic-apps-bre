@@ -112,7 +112,9 @@ You can achieve this by creating a custom `IRuleSetTrackingInterceptor` implemen
 ```csharp
 // Example
 LocalDebugTrackingInterceptor interceptor = new LocalDebugTrackingInterceptor("TrackingOutput.txt");
-interceptor.TrackDebugMessage("Debug Initial state .NET Fact", "currentPurchase", currentPurchase);
+// ...
+interceptor.TrackDebugMessage("Debug Final state .NET Fact", "currentPurchase", currentPurchase);
+interceptor.TrackDebugMessage("Debug Final Response", "RuleExecutionResult", ruleExectionOutput);
 ```
 
 The tracking interceptor is enabled when you set the following environment variable in the file `LogicApp\.vscode\tasks.json`:
@@ -122,6 +124,36 @@ The tracking interceptor is enabled when you set the following environment varia
 ```
 
 Then you can examine tracking output in the log file: `LogicApp\TrackingOutput.txt`
+
+Sample output:
+
+```text
+------------- DEBUG MESSAGE 11/11/2024 10:42:10 PM
+Rule Engine Instance Identifier: 0f774388-a33e-467a-9bf6-f8f352a26adc
+Ruleset Name: SampleRuleSet
+Title: Debug Final state .NET Fact
+Message: currentPurchase
+Value: ContosoPurchase - PurchaseAmount: 1100, ZipCode: 98052, TaxRate: 10, SalesTax: 110
+
+------------- DEBUG MESSAGE 11/11/2024 10:42:10 PM
+Rule Engine Instance Identifier: 0f774388-a33e-467a-9bf6-f8f352a26adc
+Ruleset Name: SampleRuleSet
+Title: Debug Final Response
+Message: RuleExecutionResult
+Value: XmlDoc:
+<ns0:Root xmlns:ns0="http://BizTalk_Server_Project1.SchemaUser">
+  <UserDetails>
+    <Age>70</Age>
+    <Name>UserName</Name>
+    <zipCode>98053</zipCode>
+  </UserDetails>
+  <Status>
+    <Gold>true</Gold>
+    <Discount>15</Discount>
+  </Status>
+</ns0:Root>
+PurchaseAmountPostTax: 1210
+```
 
 ## Testing Rule Sets locally with Microsoft Rules Composer
 
