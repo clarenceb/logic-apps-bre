@@ -1,0 +1,12 @@
+<ns0:PurchaseOrder xmlns:ns0="http://EAISolution.PurchaseOrder">  
+  <Header>  
+    <ReqID>ReqID_0</ReqID>  
+    <Date>Date_0</Date>  
+  </Header>  
+  <Item>  
+    <Description>Description_0</Description>  
+    <Quantity>700</Quantity>  
+    <UnitPrice>20</UnitPrice>  
+  </Item>  
+  <Status>New</Status>  
+</ns0:PurchaseOrder>

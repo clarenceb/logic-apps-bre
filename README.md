@@ -2,6 +2,13 @@
 
 A simple example of building and deploying a Logic App with Business Rules Engine (BRE).
 
+Two Logic App Workflows which use the BRE are included:
+
+* `MyRulesWorkflow`
+* `PurchaseOrderWorkflow`
+
+You can test these with the REST Client file `TestBRE.http` located in the `LogicApp` directory.
+
 ## Deploy infrastructure
 
 Creates the Logic Apps Standard Single Tenant plan.
@@ -247,3 +254,5 @@ var ruleExectionOutput = new RuleExecutionResult()
 ## Resources
 
 * [Logic Apps (Standard) – Azure DevOps sample](https://github.com/Azure/logicapps/tree/master/azure-devops-sample)
+* [Walkthrough: Creating a Simple Business Policy](https://learn.microsoft.com/en-us/biztalk/core/walkthrough-creating-a-simple-business-policy) - for Purchase Order example
+* [Walkthrough: Testing the Policy](https://learn.microsoft.com/en-us/biztalk/core/walkthrough-testing-the-policy) - for Purchase Order example

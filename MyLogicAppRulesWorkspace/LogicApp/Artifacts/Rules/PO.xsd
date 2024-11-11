@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-16"?>  
+<?xml version="1.0" encoding="utf-8"?>  
 <xs:schema xmlns:b="http://schemas.microsoft.com/BizTalk/2003" xmlns="http://EAISolution.PurchaseOrder" targetNamespace="http://EAISolution.PurchaseOrder" xmlns:xs="http://www.w3.org/2001/XMLSchema">  
   <xs:element name="PurchaseOrder">  
     <xs:complexType>  

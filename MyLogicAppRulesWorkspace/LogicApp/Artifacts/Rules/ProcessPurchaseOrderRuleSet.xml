@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<brl xmlns="http://schemas.microsoft.com/businessruleslanguage/2002">
+  <ruleset name="ProcessPurchaseOrderRuleSet">
+    <version major="1" minor="0" description="" modifiedby="EXAMPLE\nobody" date="2024-11-11T13:31:45.6411654Z" />
+    <configuration />
+    <bindings>
+      <xmldocument ref="xml_31" doctype="PO" instances="16" selectivity="1" instance="0">
+        <selector>/*[local-name()='PurchaseOrder' and namespace-uri()='http://EAISolution.PurchaseOrder']/*[local-name()='Item' and namespace-uri()='']</selector>
+        <selectoralias>/PurchaseOrder/Item</selectoralias>
+        <schema>C:\Users\clbakirt\dev\logic-apps\bre3\MyLogicAppRulesWorkspace\LogicApp\Artifacts\Rules\PO.xsd</schema>
+      </xmldocument>
+      <xmldocument ref="xml_32" doctype="PO" instances="16" selectivity="1" instance="0">
+        <selector>/*[local-name()='PurchaseOrder' and namespace-uri()='http://EAISolution.PurchaseOrder']</selector>
+        <selectoralias>/PurchaseOrder</selectoralias>
+        <schema>C:\Users\clbakirt\dev\logic-apps\bre3\MyLogicAppRulesWorkspace\LogicApp\Artifacts\Rules\PO.xsd</schema>
+      </xmldocument>
+    </bindings>
+    <rule name="ApprovalRule" priority="0" active="true">
+      <if>
+        <compare operator="less than or equal to">
+          <vocabularylink uri="3f0e9bcc-6212-4e6a-853c-e517f157a626" element="d4eb2deb-06d3-42c4-af49-ceb21331b1cc" />
+          <lhs>
+            <function>
+              <xmldocumentmember xmldocumentref="xml_31" type="int" sideeffects="false">
+                <field>*[local-name()='Quantity' and namespace-uri()='']</field>
+                <fieldalias>Quantity</fieldalias>
+              </xmldocumentmember>
+            </function>
+          </lhs>
+          <rhs>
+            <constant>
+              <int>500</int>
+            </constant>
+          </rhs>
+        </compare>
+      </if>
+      <then>
+        <function>
+          <xmldocumentmember xmldocumentref="xml_32" type="string" sideeffects="true">
+            <field>*[local-name()='Status' and namespace-uri()='']</field>
+            <fieldalias>Status</fieldalias>
+            <argument>
+              <constant>
+                <string>Approved</string>
+              </constant>
+            </argument>
+          </xmldocumentmember>
+        </function>
+      </then>
+    </rule>
+  </ruleset>
+</brl>
