@@ -7,7 +7,7 @@
       "type": "process",
       "args": [
         "build",
-        "${workspaceFolder}"
+        "${workspaceFolder}\\RulesFunction.csproj"
       ],
       "group": {
         "kind": "build",

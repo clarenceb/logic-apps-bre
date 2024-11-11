@@ -79,7 +79,7 @@ Start VSCode and then open the Workspace file:
 * Navigate to the menu option **File** / **Open Workspace from File**
 * Select the file `MyLogicAppRulesWorkspace.code-workspace`
 * **or** start VSCode with `code MyLogicAppRulesWorkspace.code-workspace` from the terminal
-* Open a Terminal window in VSCode:
+* Build the Functions project with the default build task (`CTRL+SHIFT+B`) or open a Terminal window in VSCode:
 
 ```powershell
 # Build the Function App as a custom code library for Logic Apps
@@ -91,9 +91,9 @@ dotnet build .\RulesFunction.csproj
 * Select the **Run and Debug** icon on the left-hand side of the VSCode window (or `CTRL+SHIFT+D`)
 * From the **Run and Debug** menu, select **Attach to Logic App (Logic App)**
 * Click the **Start Debugging** button (or `F5`)
-* From the **Run and Debug** menu, select **Attach to .NET Functions (Functions)**
-* Click the **Start Debugging** button (or `F5`)
-* Validate that both Logic App and Function App are running locally
+* (Optional - if you want to debug the Function) From the **Run and Debug** menu, select **Attach to .NET Functions (Functions)**
+* (Optional - if you want to debug the Function) Click the **Start Debugging** button (or `F5`)
+* Validate that both Logic App and Function (if you attached to it) are running locally
 * In the Workspace Explorer, navigate to the Logic App file `MyRulesWorkflow\workflow.json`
 * Right-click on the file and select **Open Designer** -- it should render with no errors
 * Right-click on the file and select **Overview** -- it should render with no errors
@@ -102,7 +102,28 @@ dotnet build .\RulesFunction.csproj
 * Click the action **Call a local rules function in this logic app** to view the action inputs and outputs
 * Stop the Function and Logic App debugging sessions (`SHIFT+F5`)
 
-### Testing Rule Sets locall with Microsoft Rules Composer
+## Debug Tracking when running in VSCode
+
+You [log tracking information](https://learn.microsoft.com/en-us/biztalk/core/how-to-log-tracking-information-to-file) to a local file, similar to the Microsoft Rules Composer test output pane.
+
+The tracking information does not give deep insights into fact values or other information you might want to see.
+You can achieve this by creating a custom `IRuleSetTrackingInterceptor` implementation.  See the file [DebugTracking/LocalDebugTrackingInterceptor.cs](./DebugTracking/LocalDebugTrackingInterceptor.cs) for a sample implementation of a tracking interceptor with an additional `TrackDebugMessage` method to log this type of information.
+
+```csharp
+// Example
+LocalDebugTrackingInterceptor interceptor = new LocalDebugTrackingInterceptor("TrackingOutput.txt");
+interceptor.TrackDebugMessage("Debug Initial state .NET Fact", "currentPurchase", currentPurchase);
+```
+
+The tracking interceptor is enabled when you set the following environment variable in the file `LogicApp\.vscode\tasks.json`:
+
+```json
+"DEBUG_TRACKING": "true"
+```
+
+Then you can examine tracking output in the log file: `LogicApp\TrackingOutput.txt`
+
+## Testing Rule Sets locally with Microsoft Rules Composer
 
 Download and install the [Microsoft Rules Composer](https://go.microsoft.com/fwlink/?linkid=2274238).
 
@@ -114,7 +135,7 @@ Run the `RuleComposer.exe` application from the installation directory.
 * Add an instance of the XML document of type `SchemaUser`: `Artifacts\Rules\SchemaUser.xml`
 * Click **Test**
 
-Sampole input file `SchemaUser.xml`:
+Sample input file `SchemaUser.xml`:
 
 ```xml
 <ns0:Root xmlns:ns0="http://BizTalk_Server_Project1.SchemaUser">

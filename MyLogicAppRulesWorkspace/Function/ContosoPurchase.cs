@@ -38,5 +38,13 @@ namespace ContosoNamespace
         /// Business logic to calculate sales tax
         /// </summary>
         public int GetSalesTax() => (int)((PurchaseAmount*TaxRate)/100);
+
+        /// <summary>
+        /// Override ToString() method to serialize all properties and the GetSalesTax
+        /// </summary>
+        public override string ToString()
+        {
+            return $"{this.GetType().Name} - PurchaseAmount: {PurchaseAmount}, ZipCode: {ZipCode}, TaxRate: {TaxRate}, SalesTax: {GetSalesTax()}";
+        }
     }
 }

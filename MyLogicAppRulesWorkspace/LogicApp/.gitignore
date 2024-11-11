@@ -2,6 +2,8 @@
 # Azure Functions artifacts
 bin
 obj
+*.dll
+*.pdb
 appsettings.json
 local.settings.json
 __blobstorage__
@@ -16,3 +18,7 @@ workflow-designtime/
 # Build outputs
 lib
 *.zip
+
+# Debugging
+TrackingOutput.txt
+

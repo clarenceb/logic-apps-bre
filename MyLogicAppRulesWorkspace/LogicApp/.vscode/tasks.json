@@ -19,7 +19,8 @@
         ],
         "options": {
           "env": {
-            "PATH": "${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\DotNetSDK;$env:PATH"
+            "PATH": "${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\DotNetSDK;$env:PATH",
+            "DEBUG_TRACKING": "true"
           }
         },
         "problemMatcher": "$func-watch",
@@ -27,7 +28,7 @@
         "label": "func: host start",
         "group": {
           "kind": "build",
-          "isDefault": true
+          "isDefault": false
         }
       }
     ],

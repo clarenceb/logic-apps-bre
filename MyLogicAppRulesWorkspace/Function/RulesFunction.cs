@@ -12,6 +12,8 @@ namespace Contoso.Enterprise
     using Microsoft.Azure.Workflows.RuleEngine;
     using Microsoft.Extensions.Logging;
     using System.Xml;
+    using ContosoNamespace;
+    using System.IO;
 
     /// <summary>
     /// Represents the RulesFunction flow invoked function.
@@ -67,6 +69,15 @@ namespace Contoso.Enterprise
 
                 // Create rule engine instance
                 var ruleEngine = new RuleEngine(ruleSet: ruleSet);
+                
+                // Create a tracking interceptor to log the rule execution
+                LocalDebugTrackingInterceptor interceptor = null;
+                
+                if (IsDebugTracking())
+                {
+                    interceptor = new LocalDebugTrackingInterceptor("TrackingOutput.txt");
+                    ruleEngine.TrackingInterceptor = interceptor;
+                }   
 
                 // Create a typedXml Fact(s) from input xml(s)
                 XmlDocument doc = new XmlDocument();
@@ -76,18 +87,35 @@ namespace Contoso.Enterprise
                 // Initialize .NET facts
                 var currentPurchase = new ContosoNamespace.ContosoPurchase(purchaseAmount, zipCode);
 
+                if (IsDebugTracking())
+                {
+                    interceptor.TrackDebugMessage("Debug Initial state .NET Fact", "currentPurchase", currentPurchase);
+                }
+
                 // Provide facts to rule engine and run it
                 ruleEngine.Execute(new object[] { typedXmlDocument, currentPurchase });
 
                 // Send the relevant results(facts) back
                 var updatedDoc = typedXmlDocument.Document as XmlDocument;
+
+                if (IsDebugTracking())
+                {
+                    interceptor.TrackDebugMessage("Debug .NET Fact", "currentPurchase.PurchaseAmount", currentPurchase.PurchaseAmount);
+                }
+
                 var ruleExectionOutput = new RuleExecutionResult()
                 {
                     // XML Fact document with updated values
-                    XmlDoc = updatedDoc.OuterXml,
+                    XmlDoc = IsDebugTracking() ? PrettyPrintXml(updatedDoc) : updatedDoc.OuterXml,
                     // .NET Facts returned to the Logic App
                     PurchaseAmountPostTax = currentPurchase.PurchaseAmount + currentPurchase.GetSalesTax()
                 };
+
+                if (IsDebugTracking())
+                {
+                    interceptor.TrackDebugMessage("Debug Final state .NET Fact", "currentPurchase", currentPurchase);
+                    interceptor.TrackDebugMessage("Debug Final Response", "RuleExecutionResult", ruleExectionOutput);
+                }
 
                 return Task.FromResult(ruleExectionOutput);
             }
@@ -99,13 +127,30 @@ namespace Contoso.Enterprise
             }
         }
 
+        private string PrettyPrintXml(XmlDocument xmlDoc)
+        {
+            var stringWriter = new StringWriter();
+            var xmlTextWriter = new XmlTextWriter(stringWriter)
+            {
+                Formatting = Formatting.Indented
+            };
+            xmlDoc.WriteTo(xmlTextWriter);
+            return stringWriter.ToString();
+        }
+
+        private bool IsDebugTracking()
+        {
+            var debugTracking = Environment.GetEnvironmentVariable("DEBUG_TRACKING");
+            return debugTracking != null && debugTracking.Equals("true", StringComparison.OrdinalIgnoreCase);
+        }
+
         /// <summary>
         /// Results of the rule execution
         /// </summary>
         public class RuleExecutionResult
         {
             /// <summary>
-            /// rules updated xml document
+            /// Rules updated xml document
             /// </summary>
             public string XmlDoc { get; set;}
 
@@ -113,6 +158,14 @@ namespace Contoso.Enterprise
             /// Purchase amount post tax
             /// </summary>
             public int PurchaseAmountPostTax { get; set;}
+
+            /// <summary>
+            /// Override ToString() method to serialize all properties.
+            /// </summary>
+            public override string ToString()
+            {
+                return $"XmlDoc:\n{XmlDoc}\nPurchaseAmountPostTax: {PurchaseAmountPostTax}";
+            }
         }
     }
 }
