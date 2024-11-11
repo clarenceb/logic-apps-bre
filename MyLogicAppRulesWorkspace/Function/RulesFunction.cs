@@ -83,7 +83,9 @@ namespace Contoso.Enterprise
                 var updatedDoc = typedXmlDocument.Document as XmlDocument;
                 var ruleExectionOutput = new RuleExecutionResult()
                 {
+                    // XML Fact document with updated values
                     XmlDoc = updatedDoc.OuterXml,
+                    // .NET Facts returned to the Logic App
                     PurchaseAmountPostTax = currentPurchase.PurchaseAmount + currentPurchase.GetSalesTax()
                 };
 

@@ -70,7 +70,7 @@ You can change this to segregate the infrastructure deployment and Logic App dep
 
 ![azdo-pipelines](img/azdo-pipelines.png)
 
-## Editing, testing, and debugging locally
+## Editing, testing, and debugging locally in VSCode
 
 Assumes a Windows OS and Visual Studio Code (VSCode) with Azure Functions and Azure Logic Apps (Standard) extensions installed.  You'll also need the Azurite extension for Functions local storage.  If you received storage errors, you may need to start Azurite manually (CTRL+SHIFT+P, `Azurite: Start Blob Service`, repeat for `Azurite: Start Table Service`, etc.)
 
@@ -102,6 +102,93 @@ dotnet build .\RulesFunction.csproj
 * Click the action **Call a local rules function in this logic app** to view the action inputs and outputs
 * Stop the Function and Logic App debugging sessions (`SHIFT+F5`)
 
+### Testing Rule Sets locall with Microsoft Rules Composer
+
+Download and install the [Microsoft Rules Composer](https://go.microsoft.com/fwlink/?linkid=2274238).
+
+Run the `RuleComposer.exe` application from the installation directory.
+
+* Load the rule set `Artifacts\Rules\SampleRuleSet.xml` from **Rule Store** / **Load...** menu (`CTRL+L`).
+* Select **RuleSets** / **SampleRuleSets** / **Version 1.0**
+* Right-click and select **Test RuleSet...**
+* Add an instance of the XML document of type `SchemaUser`: `Artifacts\Rules\SchemaUser.xml`
+* Click **Test**
+
+Sampole input file `SchemaUser.xml`:
+
+```xml
+<ns0:Root xmlns:ns0="http://BizTalk_Server_Project1.SchemaUser">
+  <UserDetails>
+    <Age>70</Age>
+    <Name>UserName</Name>
+    <zipCode>98052</zipCode>
+  </UserDetails>
+  <Status>
+    <Gold>false</Gold>
+    <Discount>0</Discount>
+  </Status>
+</ns0:Root>
+```
+
+Sample ouput file after testing the rule set:
+
+```xml
+<ns0:Root xmlns:ns0="http://BizTalk_Server_Project1.SchemaUser">
+  <UserDetails>
+    <Age>70</Age>
+    <Name>UserName</Name>
+    <zipCode>98052</zipCode>
+  </UserDetails>
+  <Status>
+    <Gold>true</Gold>
+    <Discount>5</Discount>
+  </Status>
+</ns0:Root>
+```
+
+However, there are rules that use the .NET Fact classes like `ContosoPurchase.cs` in both conditions and actions.  So, this is not the expected output.  It should look like this:
+
+```xml
+<ns0:Root xmlns:ns0="http://BizTalk_Server_Project1.SchemaUser">
+  <UserDetails>
+    <Age>70</Age>
+    <Name>UserName</Name>
+    <zipCode>98052</zipCode>
+  </UserDetails>
+  <Status>
+    <Gold>true</Gold>
+    <Discount>15</Discount>
+  </Status>
+</ns0:Root>
+```
+
+The discount was incorrect without the .NET Fact class `ContosoPurchase` being added to the test.
+
+We need to add an instance of the .NET Fact class `ContosoNamespace.ContosoPurchase` to the test.  This is not possible in the Microsoft Rules Composer without a Fact Creator.
+
+See the Fact Creator sample `MyFactCreator.cs`.
+
+Build the `Functions` project then copy the `RulesFunction.dll` to the `LogicApps\Artifacts\Rules` directory, along with the ruleset `SampleRuleSet.xml` and sample input file `SchemaUser.xml`.
+
+Now, add the Fact Creator and re-test the rule set (see below).
+
+![fact-creator1.png](img/fact-creator1.png)
+![fact-creator2.png](img/fact-creator2.png)
+
+You may need to restart the Microsoft Rules Composer for the fact creator to be recognized (e.g. if you rebuilt and copied the `RulesFunction.dll` assembly).
+
+Note: Only .NET Fact values assigned back into the input document will be visible in the output document.  However, as you can see in the `RulesFunction.cs` file, the `ContosoPurchase` fact values can be returned to your LogicApp workflow, e.g.
+
+```csharp
+var ruleExectionOutput = new RuleExecutionResult()
+    {
+        // XML Fact document with updated values
+        XmlDoc = updatedDoc.OuterXml,
+
+        // .NET Facts returned to the Logic App
+        PurchaseAmountPostTax = currentPurchase.PurchaseAmount + currentPurchase.GetSalesTax()
+    };
+```
 
 ## Resources
 
