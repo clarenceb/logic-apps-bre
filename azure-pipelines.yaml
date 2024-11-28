@@ -1,8 +1,6 @@
 variables:
 - name: resourceGroupName
   value: la-bre-cicd
-- name: logicAppName
-  value: bre-logicappstd
 - name: azureConnectionName
   value: lab-bre-demo-rg-sc
 
@@ -75,4 +73,5 @@ stages:
             scriptLocation: 'inlineScript'
             inlineScript: |
               cd $(Build.ArtifactStagingDirectory)\mylogicapp
-              az functionapp deploy --resource-group $(resourceGroupName) --name $(logicAppName) --src-path .\mylogicapp-$(Build.BuildNumber).zip --type zip
+              for /f "tokens=*" %%i in ('az deployment group show -n DeployPipelineTemplate -g la-bre-cicd --query properties.outputs.logicAppName.value -o tsv') do set logicAppName=%%i
+              az functionapp deploy --resource-group $(resourceGroupName) --name %logicAppName% --src-path .\mylogicapp-$(Build.BuildNumber).zip --type zip
