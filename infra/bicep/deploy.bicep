@@ -4,10 +4,13 @@ param location string = resourceGroup().location
 @description('A prefix to add to the start of all resource names')
 param prefix string = 'bre'
 
+@description('Random value to ensure unique suffix')
+param randomValue string = newGuid()
+
 @description('Tags to apply to all deployed resources')
 param tags object = {}
 
-var uniqueSuffix = uniqueString(resourceGroup().id, prefix)
+var uniqueSuffix = uniqueString(resourceGroup().id, prefix, randomValue)
 var storageKind = 'StorageV2'
 var storageSkuName = 'Standard_LRS'
 var storageMinimumTlsVersion = 'TLS1_2'
