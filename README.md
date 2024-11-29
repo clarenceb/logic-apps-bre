@@ -51,19 +51,43 @@ Deploys the Logic App with Business Rules Engine (BRE) assemblies bundled into a
 LOGIC_APP_NAME="$(az deployment group show --resource-group $RESOURCE_GROUP_NAME --name deploy --query properties.outputs.logicAppName.value -o tsv)"
 
 az functionapp deploy --resource-group $RESOURCE_GROUP_NAME --name $LOGIC_APP_NAME --src-path logicapps.zip --type zip
+```
 
-# If your Logic App using Connections (connections.json) or Parameters (parameters.json) files, you should include them in the ZIP file.
+If your Logic App using Connections (`connections.json`) or Parameters (`parameters.json`) files, you should include them in the ZIP file.  Do not include secrets in these files.  Either use Azure Key Vault references or App Settings for secrets.
 
-# If your Logic App uses App Settings for configuration, you should create a `appsettings.json` file, e.g.
-#
-# {
-#     "setting1": "value1",
-#     "setting2": "value2"
-# }
+## Deploying App Settings to your Logic App (Standard)
 
-# Then apply the appsettings.json file to the Logic App
+If your Logic App uses App Settings for configuration, you should create a `appsettings.json` file, e.g.
+
+```json
+{
+  "setting1": "value1",
+  "setting2": "value2"
+}
+```
+
+Then apply the `appsettings.json` file to the Logic App:
+
+```bash
 az functionapp config appsettings set -g $RESOURCE_GROUP_NAME -n $LOGIC_APP_NAME --settings @appsettings.json
 ```
+
+## Deploying new or updated RuleSets
+
+You can directly deploy individual RuleSet files to the logic app plan's local filesystem after deploying the Logic App.  The RuleSets are located in the directory `/home/site/wwwroot/Artifacts/Rules/`.
+
+e.g.
+
+```bash
+az functionapp deploy \
+  --resource-group $RESOURCE_GROUP_NAME \
+  --name $LOGIC_APP_NAME \
+  --src-path MyLogicAppRulesWorkspace\LogicApp\Artifacts\Rules\SampleRuleSet.xml \
+  --type static \
+  --target-path /home/site/wwwroot/Artifacts/Rules/SampleRuleSet.xml
+```
+
+The new rulesets are accessible in your workflows without having to restart the Logic App.
 
 ## Azure Pipelines automation
 
