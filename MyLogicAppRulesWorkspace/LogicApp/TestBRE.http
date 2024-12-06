@@ -19,8 +19,17 @@ Content-Type: application/json
 @purchaseOrderWorkflowUrl = {{ $dotenv PURCHASE_ORDER_WORKFLOW_URL }}
 
 POST {{ purchaseOrderWorkflowUrl }}
-Content-Type: application/json
+Content-Type: application/xml
 
-{
-    "purchaseOrderXml": "<ns0:PurchaseOrder xmlns:ns0=\"http://EAISolution.PurchaseOrder\"><Header><ReqID>ReqID_0</ReqID><Date>Date_0</Date></Header><Item><Description>Description_0</Description><Quantity>400</Quantity><UnitPrice>20</UnitPrice></Item><Status>New</Status></ns0:PurchaseOrder>"
-}
+<ns0:PurchaseOrder xmlns:ns0="http://EAISolution.PurchaseOrder">
+    <Header>
+        <ReqID>123456</ReqID>
+        <Date>2024-12-20T05:47:00Z</Date>
+    </Header>
+    <Item>
+        <Description>Ink cartridge refill</Description>
+        <Quantity>400</Quantity>
+        <UnitPrice>20</UnitPrice>
+    </Item>
+    <Status>New</Status>
+</ns0:PurchaseOrder>

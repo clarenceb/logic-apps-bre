@@ -9,7 +9,7 @@
                     "parameters": {
                         "ruleSetName": "ProcessPurchaseOrderRuleSet",
                         "documentType": "PO",
-                        "purchaseOrderXml": "@triggerBody()?['purchaseOrderXml']"
+                        "purchaseOrderXml": "@{base64ToString(triggerBody()?['$content'])}"
                     }
                 },
                 "runAfter": {}
@@ -29,19 +29,12 @@
             }
         },
         "triggers": {
-            "When_a_HTTP_request_is_received": {
+            "When_a_PurchaseOrder_is_received": {
                 "type": "Request",
                 "kind": "Http",
                 "inputs": {
                     "method": "POST",
-                    "schema": {
-                        "type": "object",
-                        "properties": {
-                            "purchaseOrderXml": {
-                                "type": "string"
-                            }
-                        }
-                    }
+                    "schema": {}
                 }
             }
         },
