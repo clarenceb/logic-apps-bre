@@ -19,6 +19,8 @@ var storageName = '${prefix}st${uniqueSuffix}'
 var logAnalyticsName = '${prefix}-logs-${uniqueSuffix}'
 var appInsName = '${prefix}-appins-${uniqueSuffix}'
 var strippedLocation = replace(toLower(location), ' ', '')
+var outlookConnectorResourceId = subscriptionResourceId('Microsoft.Web/locations/managedApis', strippedLocation, 'outlook')
+var outlookConnectorAccessPolicyName = 'outlook-${logicAppStdName}-${guid(resourceGroup().name)}'
 
 resource storage 'Microsoft.Storage/storageAccounts@2022-05-01' = {
   name: storageName
@@ -159,35 +161,28 @@ resource outlookConnector 'Microsoft.Web/connections@2018-07-01-preview' = {
   kind: 'V2'
   tags: tags
   properties: {
-    displayName: 'outlook'
+    displayName: 'Outlook.com'
     api: {
-      id: subscriptionResourceId('Microsoft.Web/locations/managedApis', strippedLocation, 'outlook')
-      type: 'Microsoft.Web/locations/managedApis'
+      id: outlookConnectorResourceId
     }
   }
 }
 
-//       "testLinks": [
-//           {
-//               "requestUri": "https://southcentralus.management.azure.com:443/subscriptions/7eca6fd2-20dc-49fc-a571-48c48aef64ba/resourceGroups/la-bre-cicd/providers/Microsoft.Web/connections/outlook-1/extensions/proxy/testconnection?api-version=2018-07-01-preview",
-//               "method": "get"
-//           }
-//       ],
-//       "testRequests": [
-//           {
-//               "body": {
-//                   "request": {
-//                       "method": "get",
-//                       "path": "testconnection"
-//                   }
-//               },
-//               "requestUri": "https://southcentralus.management.azure.com:443/subscriptions/7eca6fd2-20dc-49fc-a571-48c48aef64ba/resourceGroups/la-bre-cicd/providers/Microsoft.Web/connections/outlook-1/dynamicInvoke?api-version=2018-07-01-preview",
-//               "method": "POST"
-//           }
-//       ],
-//       "connectionRuntimeUrl": "https://18b0e3787113e41d.04.common.logic-australiaeast.azure-apihub.net/apim/outlook/08599c8b2e364c158aadb2ca4d7da9a2"
-//   }
-// }
+#disable-next-line BCP081
+resource outlookAccessPolicy 'Microsoft.Web/connections/accessPolicies@2016-06-01' = {
+  name: outlookConnectorAccessPolicyName
+  location: location
+  parent: outlookConnector
+  properties: {
+    principal: {
+      type: 'ActiveDirectory'
+      identity: {
+        tenantId: subscription().tenantId
+        objectId: logicAppStd.identity.principalId
+      }
+    }
+  }
+}
 
 output logicAppName string = logicAppStd.name
 output logicAppUrl string = logicAppStd.properties.defaultHostName

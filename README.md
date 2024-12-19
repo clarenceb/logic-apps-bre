@@ -41,7 +41,7 @@ dotnet build ./RulesFunction.csproj
 
 cd ../MyLogicAppRulesWorkspace/LogicApp
 rm -f ./logicapps.zip
-zip -r logicapps.zip . -x *local.settings.json -x *appsettings.json -x *__azurite_db_*.json -x *storage__ -x *.zip -x *.http -x *.env*
+zip -r logicapps.zip . -x *local.settings.json -x *appsettings.json -x *__azurite_db_*.json -x *storage__ -x *.zip -x *.http -x *.env* -x *template*
 unzip -t logicapps.zip | grep "lib/custom" && echo "Custom Function is packaged" || echo "Missing Custom Function"
 ```
 
@@ -286,3 +286,5 @@ var ruleExectionOutput = new RuleExecutionResult()
 * [Logic Apps (Standard) – Azure DevOps sample](https://github.com/Azure/logicapps/tree/master/azure-devops-sample)
 * [Walkthrough: Creating a Simple Business Policy](https://learn.microsoft.com/en-us/biztalk/core/walkthrough-creating-a-simple-business-policy) - for Purchase Order example
 * [Walkthrough: Testing the Policy](https://learn.microsoft.com/en-us/biztalk/core/walkthrough-testing-the-policy) - for Purchase Order example
+* [Microsoft.Web/connections](https://github.com/Azure/azure-quickstart-templates/blob/master/demos/arm-template-retrieve-azure-storage-access-keys/main.bicep#L45) - example usage
+* [Microsoft.Web/connections/accessPolicies](https://dev.to/leonards/parameterising-logic-app-standard-connectionsjson-with-bicep-part-3-57d7) - example usage
