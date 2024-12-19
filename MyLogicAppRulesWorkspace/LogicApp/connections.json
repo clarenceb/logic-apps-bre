@@ -1,0 +1,14 @@
+{
+  "managedApiConnections": {
+    "outlook": {
+      "api": {
+        "id": "/subscriptions/@parameters('workflows_subscription_id')/providers/Microsoft.Web/locations/@parameters('workflows_location_name')/managedApis/outlook"
+      },
+      "connection": {
+        "id": "/subscriptions/@parameters('workflows_subscription_id')/resourceGroups/@parameters('workflows_resource_group_name')/providers/Microsoft.Web/connections/outlook"
+      },
+      "connectionRuntimeUrl": "@parameters('outlook-ConnectionRuntimeUrl')",
+      "authentication": "@parameters('outlook-Authentication')"
+    }
+  }
+}

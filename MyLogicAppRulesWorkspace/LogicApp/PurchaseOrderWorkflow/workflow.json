@@ -2,7 +2,7 @@
     "definition": {
         "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
         "actions": {
-            "Call_a_local_rules_function_in_this_logic_app": {
+            "Execute_Purchasing_Business_Rules_function": {
                 "type": "InvokeFunction",
                 "inputs": {
                     "functionName": "PurchaseOrderFunction",
@@ -19,10 +19,77 @@
                 "kind": "http",
                 "inputs": {
                     "statusCode": 200,
-                    "body": "@body('Call_a_local_rules_function_in_this_logic_app')"
+                    "body": "@body('Execute_Purchasing_Business_Rules_function')"
                 },
                 "runAfter": {
-                    "Call_a_local_rules_function_in_this_logic_app": [
+                    "CheckIfApproved": [
+                        "SUCCEEDED"
+                    ]
+                }
+            },
+            "CheckIfApproved": {
+                "type": "If",
+                "expression": {
+                    "and": [
+                        {
+                            "equals": [
+                                "@body('XML_parse_with_schema').json.Status",
+                                "Approved"
+                            ]
+                        }
+                    ]
+                },
+                "actions": {},
+                "else": {
+                    "actions": {
+                        "Purchase_failed_e-mail": {
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "host": {
+                                    "connection": {
+                                        "referenceName": "outlook"
+                                    }
+                                },
+                                "method": "post",
+                                "body": {
+                                    "To": "@parameters('recipient_email')",
+                                    "Subject": "Your purchase order was rejected",
+                                    "Body": "<p class=\"editor-paragraph\">Your purchase order was rejected</p>",
+                                    "Importance": "Normal"
+                                },
+                                "path": "/v2/Mail"
+                            }
+                        }
+                    }
+                },
+                "runAfter": {
+                    "XML_parse_with_schema": [
+                        "SUCCEEDED"
+                    ]
+                }
+            },
+            "XML_parse_with_schema": {
+                "type": "XmlParse",
+                "inputs": {
+                    "content": "@body('Execute_Purchasing_Business_Rules_function')?['XmlDoc']",
+                    "schema": {
+                        "source": "LogicApp",
+                        "name": "PO.xsd"
+                    },
+                    "xmlReaderSettings": {
+                        "dtdProcessing": "Prohibit",
+                        "xmlNormalization": true,
+                        "ignoreWhitespace": true,
+                        "ignoreProcessingInstructions": true
+                    },
+                    "jsonWriterSettings": {
+                        "ignoreAttributes": true,
+                        "useFullyQualifiedNames": false
+                    },
+                    "rootNodeQualifiedName": "PurchaseOrder"
+                },
+                "runAfter": {
+                    "Execute_Purchasing_Business_Rules_function": [
                         "Succeeded"
                     ]
                 }

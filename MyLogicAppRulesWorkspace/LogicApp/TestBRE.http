@@ -28,8 +28,40 @@ Content-Type: application/xml
     </Header>
     <Item>
         <Description>Ink cartridge refill</Description>
-        <Quantity>400</Quantity>
-        <UnitPrice>20</UnitPrice>
+        <Quantity>5</Quantity>
+        <UnitPrice>22.39</UnitPrice>
     </Item>
     <Status>New</Status>
 </ns0:PurchaseOrder>
+
+###
+# Test PurchaseOrderWorkflow
+# @purchaseOrderWorkflowUrl = {{ $dotenv PURCHASE_ORDER_WORKFLOW_URL }}
+
+# POST {{ purchaseOrderWorkflowUrl }}
+# Content-Type: application/xml
+
+# <ns0:PurchaseOrder xmlns:ns0="http://EAISolution.PurchaseOrder">
+#     <Header>
+#         <ReqID>123456</ReqID>
+#         <Date>2024-12-20T05:47:00Z</Date>
+#         <DiscountCode>BLKFRI-10</DiscountCode>
+#     </Header>
+#     <Items>
+#         <Item>
+#             <Description>Ink cartridge refill</Description>
+#             <Quantity>5</Quantity>
+#             <UnitPrice>22.39</UnitPrice>
+#         </Item>
+#         <Item>
+#             <Description>Gel pen 10 pc</Description>
+#             <Quantity>10</Quantity>
+#             <UnitPrice>5.50</UnitPrice>
+#         </Item>
+#     <Item>
+#     <Purchaser>
+#         <Name>John Citizen</Name>
+#         <Email>John.Citizen@example.com</Email>
+#     </Purchaser>
+#     <Status>New</Status>
+# </ns0:PurchaseOrder>

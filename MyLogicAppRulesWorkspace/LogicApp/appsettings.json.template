@@ -1,0 +1,8 @@
+{
+    "outlook-connectionKey": "eyJ....",
+    "outlook-ConnectionRuntimeUrl": "https://dummy/apim/outlook/dummy/",
+    "recipient_email": "email@address",
+    "WORKFLOWS_SUBSCRIPTION_ID": "0000-0000-0000-0000",
+    "WORKFLOWS_LOCATION_NAME": "your-region",
+    "WORKFLOWS_RESOURCE_GROUP_NAME": "la-bre-cicd"
+}

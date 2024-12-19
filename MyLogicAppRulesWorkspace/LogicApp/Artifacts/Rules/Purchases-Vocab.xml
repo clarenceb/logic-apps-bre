@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<brl xmlns="http://schemas.microsoft.com/businessruleslanguage/2002">
+  <vocabulary id="da8124e1-36a8-4c26-871b-b0eafa758d87" name="Purchases" uri="" description="">
+    <version major="1" minor="0" description="" modifiedby="SOUTHPACIFIC\clbakirt" date="2024-12-08T21:41:07.7464238Z" />
+    <vocabularydefinition id="a62c16e1-deeb-4dd9-9d6c-4aeb492fd48c" name="MaxPurchaseQuantity" description="5">
+      <literaldefinition type="int">
+        <int>5</int>
+      </literaldefinition>
+      <formatstring language="en-US" string="MaxPurchaseAmount" />
+    </vocabularydefinition>
+  </vocabulary>
+</brl>

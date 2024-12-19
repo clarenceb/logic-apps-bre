@@ -40,7 +40,9 @@ dotnet restore ./RulesFunction.csproj
 dotnet build ./RulesFunction.csproj
 
 cd ../MyLogicAppRulesWorkspace/LogicApp
-zip -r logicapps.zip . -x *local.settings.json -x *appsettings.json -x *__azurite_db_*.json -x *storage__ -x *.zip
+rm -f ./logicapps.zip
+zip -r logicapps.zip . -x *local.settings.json -x *appsettings.json -x *__azurite_db_*.json -x *storage__ -x *.zip -x *.http -x *.env*
+unzip -t logicapps.zip | grep "lib/custom" && echo "Custom Function is packaged" || echo "Missing Custom Function"
 ```
 
 ## Deploy Logic App with BRE
@@ -117,6 +119,9 @@ Start VSCode and then open the Workspace file:
 cd MyLogicAppRulesWorkspace\Function
 dotnet restore .\RulesFunction.csproj
 dotnet build .\RulesFunction.csproj
+
+cd ..\LogicApp
+cp local.settings.json.template local.settings.json
 ```
 
 * Select the **Run and Debug** icon on the left-hand side of the VSCode window (or `CTRL+SHIFT+D`)
@@ -125,7 +130,8 @@ dotnet build .\RulesFunction.csproj
 * (Optional - if you want to debug the Function) From the **Run and Debug** menu, select **Attach to .NET Functions (Functions)**
 * (Optional - if you want to debug the Function) Click the **Start Debugging** button (or `F5`)
 * Validate that both Logic App and Function (if you attached to it) are running locally
-* In the Workspace Explorer, navigate to the Logic App file `MyRulesWorkflow\workflow.json`
+* In the Workspace Explorer, navigate to the Logic App file `PurchaseOrder\workflow.json`
+* Right-click on the file and select **Use Connectors from Azure** -- select the `LogicApp` folder, you should see new app settings added to `local.settings.json`
 * Right-click on the file and select **Open Designer** -- it should render with no errors
 * Right-click on the file and select **Overview** -- it should render with no errors
 * Copy the Logic App URL and paste it into a `.env` file (see `.env-template` as an example)
