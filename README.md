@@ -39,9 +39,25 @@ cd MyLogicAppRulesWorkspace/Function
 dotnet restore ./RulesFunction.csproj
 dotnet build ./RulesFunction.csproj
 
-cd ../MyLogicAppRulesWorkspace/LogicApp
-rm -f ./logicapps.zip
-zip -r logicapps.zip . -x *local.settings.json -x *appsettings.json -x *__azurite_db_*.json -x *storage__ -x *.zip -x *.http -x *.env* -x *template*
+cd ../LogicApp
+rm -rf ./staging
+mkdir -p ./staging
+
+cp -a ./Artifacts ./staging
+cp -a ./lib ./staging
+WORKFLOW_DIRS=("PurchaseOrderWorkflow" "MyRulesWorkflow")
+for WORKFLOW_DIR in "${WORKFLOW_DIRS[@]}"; do
+  cp -a ./$WORKFLOW_DIR ./staging
+done
+cp connections.json ./staging
+cp parameters.azure.json ./staging/parameters.json
+cp host.json ./staging
+if [ -d .debug ]; then
+  cp -a .debug ./staging
+fi
+
+cd ./staging
+zip -r logicapps.zip . -x appsettings.json
 unzip -t logicapps.zip | grep "lib/custom" && echo "Custom Function is packaged" || echo "Missing Custom Function"
 ```
 
@@ -50,9 +66,14 @@ unzip -t logicapps.zip | grep "lib/custom" && echo "Custom Function is packaged"
 Deploys the Logic App with Business Rules Engine (BRE) assemblies bundled into a ZIP file to a Logic Apps Standard plan.
 
 ```bash
+cd ..
+OUTLOOK_RUNTIME_CONN_URL="$(az deployment group show --resource-group $RESOURCE_GROUP_NAME --name deploy --query properties.outputs.outlookRuntimeConnectionUrl.value -o tsv)"
+echo $OUTLOOK_RUNTIME_CONN_URL
+jq ".\"outlook-ConnectionRuntimeUrl\" = \"$OUTLOOK_RUNTIME_CONN_URL\"" appsettings.json > ./staging/appsettings.json
+
 LOGIC_APP_NAME="$(az deployment group show --resource-group $RESOURCE_GROUP_NAME --name deploy --query properties.outputs.logicAppName.value -o tsv)"
 
-az functionapp deploy --resource-group $RESOURCE_GROUP_NAME --name $LOGIC_APP_NAME --src-path logicapps.zip --type zip
+az functionapp deploy --resource-group $RESOURCE_GROUP_NAME --name $LOGIC_APP_NAME --src-path ./staging/logicapps.zip --type zip
 ```
 
 If your Logic App using Connections (`connections.json`) or Parameters (`parameters.json`) files, you should include them in the ZIP file.  Do not include secrets in these files.  Either use Azure Key Vault references or App Settings for secrets.
@@ -71,7 +92,7 @@ If your Logic App uses App Settings for configuration, you should create a `apps
 Then apply the `appsettings.json` file to the Logic App:
 
 ```bash
-az functionapp config appsettings set -g $RESOURCE_GROUP_NAME -n $LOGIC_APP_NAME --settings @appsettings.json
+az functionapp config appsettings set -g $RESOURCE_GROUP_NAME -n $LOGIC_APP_NAME --settings @staging/appsettings.json
 ```
 
 ## Deploying new or updated RuleSets

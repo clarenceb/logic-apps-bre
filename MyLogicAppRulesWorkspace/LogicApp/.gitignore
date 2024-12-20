@@ -19,6 +19,9 @@ workflow-designtime/
 lib
 *.zip
 
+# Staging release
+staging
+
 # Debugging
 TrackingOutput.txt
 .env

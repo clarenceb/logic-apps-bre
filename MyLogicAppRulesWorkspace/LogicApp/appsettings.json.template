@@ -1,6 +1,5 @@
 {
-    "outlook-connectionKey": "eyJ....",
-    "outlook-ConnectionRuntimeUrl": "https://dummy/apim/outlook/dummy/",
+    "outlook-ConnectionRuntimeUrl": "retrieve this from the bicep output `outlookRuntimeConnectionUrl`",
     "recipient_email": "email@address",
     "WORKFLOWS_SUBSCRIPTION_ID": "0000-0000-0000-0000",
     "WORKFLOWS_LOCATION_NAME": "your-region",

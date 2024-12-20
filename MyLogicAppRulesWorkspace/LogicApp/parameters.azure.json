@@ -1,0 +1,28 @@
+{
+  "outlook-ConnectionRuntimeUrl": {
+    "type": "String",
+    "value": "@appsetting('outlook-ConnectionRuntimeUrl')"
+  },
+  "outlook-Authentication": {
+    "type": "Object",
+    "value": {
+      "type": "ManagedServiceIdentity"
+    }
+  },
+  "recipient_email": {
+    "type": "String",
+    "value": "@appsetting('recipient_email')"
+  },
+  "workflows_subscription_id": {
+    "type": "String",
+    "value": "@appsetting('WORKFLOWS_SUBSCRIPTION_ID')"
+  },
+  "workflows_location_name": {
+    "type": "String",
+    "value": "@appsetting('WORKFLOWS_LOCATION_NAME')"
+  },
+  "workflows_resource_group_name": {
+    "type": "String",
+    "value": "@appsetting('WORKFLOWS_RESOURCE_GROUP_NAME')"
+  }
+}
