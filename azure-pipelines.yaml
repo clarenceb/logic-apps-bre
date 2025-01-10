@@ -97,13 +97,13 @@ stages:
           displayName: 'Configure Logic App settings'
           inputs:
             azureSubscription: '$(azureConnectionName)'
-            scriptType: 'bash'
+            scriptType: 'batch'
             scriptLocation: 'inlineScript'
             inlineScript: |
               cd $(Build.ArtifactStagingDirectory)\mylogicapp
 
               for /f "tokens=*" %%i in ('az deployment group show -n DeployPipelineTemplate -g $(resourceGroupName) --query properties.outputs.logicAppName.value -o tsv') do set logicAppName=%%i
-              for /f "tokens=*" %%i in ('az deployment group show -n DeployPipelineTemplate -g $(resourceGroupName) --query properties.outputs.logicAppName.value -o tsv') do set logicAppLocation=%%i
+              for /f "tokens=*" %%i in ('az deployment group show -n DeployPipelineTemplate -g $(resourceGroupName) --query properties.outputs.logicAppLocation.value -o tsv') do set logicAppLocation=%%i
               for /f "tokens=*" %%i in ('az account show --query id -o tsv') do set subscriptionId=%%i
               for /f "tokens=*" %%i in ('az deployment group show -n DeployPipelineTemplate -g $(resourceGroupName) --query properties.outputs.outlookRuntimeConnectionUrl.value -o tsv') do set outlookConnUrl=%%i
 
