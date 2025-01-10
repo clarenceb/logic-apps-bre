@@ -57,7 +57,7 @@ if [ -d .debug ]; then
 fi
 
 cd ./staging
-zip -r logicapps.zip . -x appsettings.json
+zip -r logicapps.zip . -x appsettings.json -x local.settings.json
 unzip -t logicapps.zip | grep "lib/custom" && echo "Custom Function is packaged" || echo "Missing Custom Function"
 ```
 

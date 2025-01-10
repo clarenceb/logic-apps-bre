@@ -186,4 +186,5 @@ resource outlookAccessPolicy 'Microsoft.Web/connections/accessPolicies@2016-06-0
 
 output logicAppName string = logicAppStd.name
 output logicAppUrl string = logicAppStd.properties.defaultHostName
+output logicAppLocation string = logicAppStd.location
 output outlookRuntimeConnectionUrl string = outlookConnector.properties.connectionRuntimeUrl

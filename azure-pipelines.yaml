@@ -3,8 +3,11 @@ variables:
   value: la-bre-cicd
 - name: azureConnectionName
   value: lab-bre-demo-rg-sc
+- name: recipientEmail
+  value: user@example.com
 
 stages:
+
 - stage: Deploy_Infra
   jobs:
     - job: Bicep
@@ -26,6 +29,7 @@ stages:
             # csmParametersFile: '$(Pipeline.Workspace)/infra/bicep/deploy.bicepparam'
             deploymentMode: 'Incremental'
             deploymentName: 'DeployPipelineTemplate'
+
 - stage: BuildPackage_LogicApp
   jobs:
     - job: BuildPackage_LogicApp
@@ -38,12 +42,25 @@ stages:
           inputs:
             script: |
               cd MyLogicAppRulesWorkspace\Function
-              dotnet restore ./RulesFunction.csproj
-              dotnet build ./RulesFunction.csproj
+              dotnet restore .\RulesFunction.csproj
+              dotnet build .\RulesFunction.csproj
+        - task: CmdLine@2
+          displayName: 'Prepare Logic App package file'
+          inputs:
+            script: |
+                cd MyLogicAppRulesWorkspace\LogicApp
+                mkdir .\staging
+                xcopy .\Artifacts .\staging /E /I
+                xcopy .\lib .\staging /E /I
+                xcopy .\PurchaseOrderWorkflow .\staging /E /I
+                xcopy .\MyRulesWorkflow .\staging /E /I
+                copy connections.json .\staging
+                copy parameters.azure.json .\staging\parameters.json
+                copy host.json .\staging
         - task: ArchiveFiles@2
           displayName: 'Create LogicApp zip package'
           inputs:
-            rootFolderOrFile: 'MyLogicAppRulesWorkspace\LogicApp'
+            rootFolderOrFile: 'MyLogicAppRulesWorkspace\LogicApp\staging'
             includeRootFolder: false
             archiveType: 'zip'
             archiveFile: '$(Build.ArtifactStagingDirectory)/mylogicapp/mylogicapp-$(Build.BuildNumber).zip'
@@ -53,6 +70,7 @@ stages:
           inputs:
             targetPath: '$(Build.ArtifactStagingDirectory)/mylogicapp'
             artifactName: LogicAppBRE
+
 - stage: Deploy_LogicApp
   jobs:
     - job: Deploy_LogicApp
@@ -73,5 +91,29 @@ stages:
             scriptLocation: 'inlineScript'
             inlineScript: |
               cd $(Build.ArtifactStagingDirectory)\mylogicapp
-              for /f "tokens=*" %%i in ('az deployment group show -n DeployPipelineTemplate -g la-bre-cicd --query properties.outputs.logicAppName.value -o tsv') do set logicAppName=%%i
+              for /f "tokens=*" %%i in ('az deployment group show -n DeployPipelineTemplate -g $(resourceGroupName) --query properties.outputs.logicAppName.value -o tsv') do set logicAppName=%%i
               az functionapp deploy --resource-group $(resourceGroupName) --name %logicAppName% --src-path .\mylogicapp-$(Build.BuildNumber).zip --type zip
+        - task: AzureCLI@2
+          displayName: 'Configure Logic App settings'
+          inputs:
+            azureSubscription: '$(azureConnectionName)'
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: |
+              cd $(Build.ArtifactStagingDirectory)\mylogicapp
+
+              for /f "tokens=*" %%i in ('az deployment group show -n DeployPipelineTemplate -g $(resourceGroupName) --query properties.outputs.logicAppName.value -o tsv') do set logicAppName=%%i
+              for /f "tokens=*" %%i in ('az deployment group show -n DeployPipelineTemplate -g $(resourceGroupName) --query properties.outputs.logicAppName.value -o tsv') do set logicAppLocation=%%i
+              for /f "tokens=*" %%i in ('az account show --query id -o tsv') do set subscriptionId=%%i
+              for /f "tokens=*" %%i in ('az deployment group show -n DeployPipelineTemplate -g $(resourceGroupName) --query properties.outputs.outlookRuntimeConnectionUrl.value -o tsv') do set outlookConnUrl=%%i
+
+              echo ^{
+              echo     "outlook-ConnectionRuntimeUrl": "%outlookConnUrl%",
+              echo     "recipient_email": "$(recipientEmail)",
+              echo     "WORKFLOWS_SUBSCRIPTION_ID": "%subscriptionId%",
+              echo     "WORKFLOWS_LOCATION_NAME": "%logicAppLocation%",
+              echo     "WORKFLOWS_RESOURCE_GROUP_NAME": "$(resourceGroupName)"
+              echo ^} > appsettings.json
+
+              az functionapp config appsettings set --name %logicAppName% --resource-group $(resourceGroupName) --settings @appsettings.json
+              del appsettings.json
