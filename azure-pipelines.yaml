@@ -91,8 +91,8 @@ stages:
             scriptLocation: 'inlineScript'
             inlineScript: |
               cd $(Build.ArtifactStagingDirectory)\mylogicapp
-              for /f "tokens=*" %%i in ('az deployment group show -n DeployPipelineTemplate -g $(resourceGroupName) --query properties.outputs.logicAppName.value -o tsv') do set logicAppName=%%i
-              az functionapp deploy --resource-group $(resourceGroupName) --name %logicAppName% --src-path .\mylogicapp-$(Build.BuildNumber).zip --type zip
+              for /f "tokens=*" %%i in ('az deployment group show -n DeployPipelineTemplate -g %resourceGroupName% --query properties.outputs.logicAppName.value -o tsv') do set logicAppName=%%i
+              az functionapp deploy --resource-group %resourceGroupName% --name %logicAppName% --src-path .\mylogicapp-$(Build.BuildNumber).zip --type zip
         - task: AzureCLI@2
           displayName: 'Configure Logic App settings'
           inputs:
@@ -102,17 +102,17 @@ stages:
             inlineScript: |
               cd $(Build.ArtifactStagingDirectory)\mylogicapp
 
-              for /f "tokens=*" %%i in ('az deployment group show -n DeployPipelineTemplate -g $(resourceGroupName) --query properties.outputs.logicAppName.value -o tsv') do set logicAppName=%%i
-              for /f "tokens=*" %%i in ('az deployment group show -n DeployPipelineTemplate -g $(resourceGroupName) --query properties.outputs.logicAppLocation.value -o tsv') do set logicAppLocation=%%i
+              for /f "tokens=*" %%i in ('az deployment group show -n DeployPipelineTemplate -g $%resourceGroupName% --query properties.outputs.logicAppName.value -o tsv') do set logicAppName=%%i
+              for /f "tokens=*" %%i in ('az deployment group show -n DeployPipelineTemplate -g %resourceGroupName% --query properties.outputs.logicAppLocation.value -o tsv') do set logicAppLocation=%%i
               for /f "tokens=*" %%i in ('az account show --query id -o tsv') do set subscriptionId=%%i
-              for /f "tokens=*" %%i in ('az deployment group show -n DeployPipelineTemplate -g $(resourceGroupName) --query properties.outputs.outlookRuntimeConnectionUrl.value -o tsv') do set outlookConnUrl=%%i
+              for /f "tokens=*" %%i in ('az deployment group show -n DeployPipelineTemplate -g %resourceGroupName% --query properties.outputs.outlookRuntimeConnectionUrl.value -o tsv') do set outlookConnUrl=%%i
 
               echo ^{
               echo     "outlook-ConnectionRuntimeUrl": "%outlookConnUrl%",
-              echo     "recipient_email": "$(recipientEmail)",
-              echo     "WORKFLOWS_SUBSCRIPTION_ID": "%subscriptionId%",
+              echo     "recipient_email": "%RECIPIENTEMAIL%",
+              echo     "WORKFLOWS_SUBSCRIPTION_ID": "%SUBSCRIPTIONID%",
               echo     "WORKFLOWS_LOCATION_NAME": "%logicAppLocation%",
-              echo     "WORKFLOWS_RESOURCE_GROUP_NAME": "$(resourceGroupName)"
+              echo     "WORKFLOWS_RESOURCE_GROUP_NAME": "%resourceGroupName%"
               echo ^} > appsettings.json
 
               az functionapp config appsettings set --name %logicAppName% --resource-group $(resourceGroupName) --settings @appsettings.json
