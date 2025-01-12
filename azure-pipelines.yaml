@@ -50,13 +50,13 @@ stages:
             script: |
                 cd MyLogicAppRulesWorkspace\LogicApp
                 mkdir .\staging
-                xcopy .\Artifacts .\staging /E /I
-                xcopy .\lib .\staging /E /I
-                xcopy .\PurchaseOrderWorkflow .\staging /E /I
-                xcopy .\MyRulesWorkflow .\staging /E /I
-                copy connections.json .\staging
+                xcopy .\Artifacts .\staging\Artifacts /E /I
+                xcopy .\lib .\staging\lib /E /I
+                xcopy .\PurchaseOrderWorkflow .\staging\PurchaseOrderWorkflow /E /I
+                xcopy .\MyRulesWorkflow .\staging\MyRulesWorkflow /E /I
+                copy connections.json .\staging\connections.json
                 copy parameters.azure.json .\staging\parameters.json
-                copy host.json .\staging
+                copy host.json .\staging\host.json
         - task: ArchiveFiles@2
           displayName: 'Create LogicApp zip package'
           inputs:
