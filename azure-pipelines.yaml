@@ -115,5 +115,7 @@ stages:
               echo     "WORKFLOWS_RESOURCE_GROUP_NAME": "%resourceGroupName%"
               echo ^} > appsettings.json
 
-              az functionapp config appsettings set --name %logicAppName% --resource-group $(resourceGroupName) --settings @appsettings.json
+              type .\appsettings.json
+
+              az functionapp config appsettings set --name %logicAppName% --resource-group $(resourceGroupName) --settings @.\appsettings.json --debug
               del appsettings.json
