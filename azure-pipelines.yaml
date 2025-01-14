@@ -107,13 +107,15 @@ stages:
               for /f "tokens=*" %%i in ('az account show --query id -o tsv') do set subscriptionId=%%i
               for /f "tokens=*" %%i in ('az deployment group show -n DeployPipelineTemplate -g %resourceGroupName% --query properties.outputs.outlookRuntimeConnectionUrl.value -o tsv') do set outlookConnUrl=%%i
 
-              echo ^{
+              (
+              echo {
               echo     "outlook-ConnectionRuntimeUrl": "%outlookConnUrl%",
               echo     "recipient_email": "%RECIPIENTEMAIL%",
               echo     "WORKFLOWS_SUBSCRIPTION_ID": "%SUBSCRIPTIONID%",
               echo     "WORKFLOWS_LOCATION_NAME": "%logicAppLocation%",
               echo     "WORKFLOWS_RESOURCE_GROUP_NAME": "%resourceGroupName%"
-              echo ^} > appsettings.json
+              echo }
+              ) > appsettings.json
 
               type .\appsettings.json
 
