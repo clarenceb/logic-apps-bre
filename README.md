@@ -133,6 +133,8 @@ Be sure to define the following pipeline variables in your Azure DevOps project:
 
 ![azdo-pipeline-variables](img/azdo-pipeline-variables.png)
 
+After deploying the logic app, you'll need to manually authorise the Outlook connector used in the `PurchaseOrderWorkflow` workflow via the Azure Portal.
+
 ## Editing, testing, and debugging locally in VSCode
 
 Assumes a Windows OS and Visual Studio Code (VSCode) with Azure Functions and Azure Logic Apps (Standard) extensions installed.  You'll also need the Azurite extension for Functions local storage.  If you received storage errors, you may need to start Azurite manually (CTRL+SHIFT+P, `Azurite: Start Blob Service`, repeat for `Azurite: Start Table Service`, etc.)
