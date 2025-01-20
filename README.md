@@ -114,15 +114,24 @@ The new rulesets are accessible in your workflows without having to restart the 
 
 ## Azure Pipelines automation
 
+The simplest way to deploy this sample is via a CI/CD pipeline.  Azure DevOps Pipelines is used for this example but you can map the steps from this pipeline to any other CI/CD tool.
+
 Create a new Azure DevOps project and import the `azure-pipelines.yml` file to automate the build and deployment of the Logic App with BRE.
 
 This pipeline is using the new YAML-based multi-stage pipelines feature in Azure DevOps.
 
 It deploys infrastructure, builds the Logic App with BRE, and deploys the Logic App to a Logic Apps Standard plan.
 
-You can change this to segregate the infrastructure deployment and Logic App deployment into separate pipelines.
+You can change sample to segregate the infrastructure deployment and Logic App deployment into their own separate pipelines.
 
 ![azdo-pipelines](img/azdo-pipelines.png)
+
+Be sure to define the following pipeline variables in your Azure DevOps project:
+
+* `recipientEmail` (for the Outlook connector used in the `PurchaseOrderWorkflow` workflow)
+* `subscriptionId` (your Azure subscription Id, used in the Bicep deployment)
+
+![azdo-pipeline-variables](img/azdo-pipeline-variables.png)
 
 ## Editing, testing, and debugging locally in VSCode
 
