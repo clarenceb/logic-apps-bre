@@ -3,8 +3,6 @@ variables:
   value: la-bre-cicd
 - name: azureConnectionName
   value: lab-bre-demo-rg-sc
-- name: recipientEmail
-  value: user@example.com
 
 stages:
 
