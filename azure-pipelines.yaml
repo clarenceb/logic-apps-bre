@@ -2,7 +2,7 @@ variables:
 - name: resourceGroupName
   value: la-bre-cicd
 - name: azureConnectionName
-  value: lab-bre-demo-rg-sc
+  value: logicapps-cicd-bre-cbx
 
 stages:
 
